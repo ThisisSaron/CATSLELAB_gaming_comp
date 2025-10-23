@@ -15,7 +15,7 @@ nose = ["faces/6nose.PNG","faces/7nose.PNG","faces/8nose.PNG"]
 mouth = ["faces/9mouth.PNG","faces/11mouth.PNG","faces/12mouth.PNG","faces/13mouth.PNG" ]
 pumpkin = "Images/pumpkin.png"
 
-start = time.time()
+
 
 def gen_random_pumpkins():
     eye = random.randint(0,3)
@@ -30,6 +30,11 @@ class MyGameWindow(arcade.Window):
         super().__init__(width,height,title,resizable=resizable)
         #self.set_location(400,200)
         self.collision = [False,(None,None)]
+        self.submit = False
+        self.lst = []
+        self.start = time.time()
+        self.lost = False
+        self.won = False
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
@@ -141,24 +146,52 @@ class MyGameWindow(arcade.Window):
                         self.current_ob.append(i+9) #CHANGE THIS IF YOU ADD MORE EYES
                 else:
                     self.mouth_sprite_list[i].position = self.mouthpos[i]
-
-
             self.collision = (False,(None,None))
 
-        if not self.gen_pumpkin and time.time() - start > 10:    
-            lst = gen_random_pumpkins()
+        if not self.gen_pumpkin and time.time() - self.start > 10:    
+            self.lst = gen_random_pumpkins()
             self.p = arcade.Sprite(pumpkin,scale=0.4)
             self.p.position = 600,500
             self.gen_pumpkin.append(self.p)
-            self.e = arcade.Sprite(eyes[lst[0]],scale=0.2)
+            self.e = arcade.Sprite(eyes[self.lst[0]],scale=0.2)
             self.e.position = self.p.position
             self.gen_pumpkin.append(self.e)
-            self.n = arcade.Sprite(nose[lst[1]],scale=0.3)
+            self.n = arcade.Sprite(nose[self.lst[1]],scale=0.3)
             self.n.position = self.p.position
             self.gen_pumpkin.append(self.n)
-            self.m = arcade.Sprite(mouth[lst[2]],scale=0.3)
+            self.m = arcade.Sprite(mouth[self.lst[2]],scale=0.3)
             self.m.position = self.p.position
             self.gen_pumpkin.append(self.m)
+
+            
+
+
+        if self.submit:
+            self.start = time.time()
+            self.gen_pumpkin = arcade.SpriteList()
+            self.curr_sprites = arcade.SpriteList()
+            self.sprite_list[0].position = 300,180
+            self.lst[0] += 1
+            self.lst[1] += 5
+            self.lst[2] += 9
+            if len(self.lst) != len(self.current_ob):
+                self.lost = True
+            else:
+                for obj in self.lst:
+                    print(self.lst,self.current_ob)
+                    if obj not in self.current_ob:
+                        self.lost = True
+
+            self.submit = False
+
+        if self.lost:
+            arcade.draw_text("GAME OVER",600,500,arcade.color.WHITE,24,width=400,align="center")
+            self.sprite_list= arcade.SpriteList()
+            self.curr_sprites= arcade.SpriteList()
+            self.gen_pumpkin= arcade.SpriteList()
+            self.eye_sprite_list= arcade.SpriteList()
+            self.nose_sprite_list= arcade.SpriteList()
+            self.mouth_sprite_list= arcade.SpriteList()
 
 
         self.sprite_list.draw()
@@ -214,6 +247,9 @@ class MyGameWindow(arcade.Window):
         for i in range(len(self.mouth_sprite_list)):
             if arcade.check_for_collision(self.pumpkin,self.mouth_sprite_list[i]):
                 self.collision = (True, ("mouth",i))
+        if self.gen_pumpkin:
+            if arcade.check_for_collision(self.pumpkin,self.gen_pumpkin[0]):
+                self.submit = True
 
 
 
