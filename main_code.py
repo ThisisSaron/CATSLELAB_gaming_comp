@@ -16,44 +16,66 @@ class MyGameWindow(arcade.Window):
     def __init__(self,width,height,title,resizable = True):
         super().__init__(width,height,title,resizable=resizable)
         #self.set_location(400,200)
+        self.collision = [False,(None,None)]
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
+        self.eyespos = [(self.screen_width-420,5),(self.screen_width-420,70),(self.screen_width-420,130),(self.screen_width-420,150)]
+        self.curr_sprites = arcade.SpriteList()
+
         print(self.screen_width,self.screen_height)
 
         self.background = arcade.load_texture("Images\BackGround.png")
         self.table =  arcade.load_texture("Images/table.jpeg")
         self.sprite_list = arcade.SpriteList()
+        self.pumpkin = arcade.Sprite("Images/pumpkin.png",scale=0.4)
+        self.pumpkin.position = 300,180
+        self.sprite_list.append(self.pumpkin)
+
                 #eyes
+        self.eye_sprite_list = arcade.SpriteList()
         self.eye_sprite1 = arcade.Sprite(eyes[0],scale=0.2)
-        self.eye_sprite1.position = self.screen_width-420,5
-        self.sprite_list.append(self.eye_sprite1)
+        self.eye_sprite1.position = self.eyespos[0]
+        self.eye_sprite_list.append(self.eye_sprite1)
 
         self.eye_sprite2 = arcade.Sprite(eyes[1],scale=0.2)
-        self.eye_sprite2.position = self.screen_width-420,70
-        self.sprite_list.append(self.eye_sprite2)
+        self.eye_sprite2.position = self.eyespos[1]
+        self.eye_sprite_list.append(self.eye_sprite2)
 
         self.eye_sprite3 = arcade.Sprite(eyes[2],scale=0.2)
-        self.eye_sprite3.position = self.screen_width-420,130
-        self.sprite_list.append(self.eye_sprite3)
+        self.eye_sprite3.position = self.eyespos[2]
+        self.eye_sprite_list.append(self.eye_sprite3)
 
-        self.eye_sprite4 = arcade.Sprite(eyes[4],scale=0.2)
-        self.eye_sprite4.position = self.screen_width-420,150
-        self.sprite_list.append(self.eye_sprite4)
+        self.eye_sprite4 = arcade.Sprite(eyes[3],scale=0.2)
+        self.eye_sprite4.position = self.eyespos[3]
+        self.eye_sprite_list.append(self.eye_sprite4)
         ###############################################
                     #nose
+        self.nose_sprite_list = arcade.SpriteList()
         self.nose_sprite6 = arcade.Sprite(nose[0],scale=0.5)
         self.nose_sprite6.position = self.screen_width-620,20
-        self.sprite_list.append(self.nose_sprite6)
+        self.nose_sprite_list.append(self.nose_sprite6)
 
         self.nose_sprite7 = arcade.Sprite(nose[1],scale=0.5)
         self.nose_sprite7.position = self.screen_width-620,120
-        self.sprite_list.append(self.nose_sprite7)
+        self.nose_sprite_list.append(self.nose_sprite7)
 
         self.nose_sprite8 = arcade.Sprite(nose[2],scale=0.5)
         self.nose_sprite8.position = self.screen_width-620,160
-        self.sprite_list.append(self.nose_sprite8)
+        self.nose_sprite_list.append(self.nose_sprite8)
+                   # MOUTH
+        self.mouth_sprite_list = arcade.SpriteList()
+        self.mouth_sprite9 = arcade.Sprite(mouth[-1],scale=0.3)
+        self.mouth_sprite9.position = self.screen_width-820,60
+        self.mouth_sprite_list.append(self.mouth_sprite9)
 
+        self.mouth_sprite10 = arcade.Sprite(mouth[1],scale=0.3)
+        self.mouth_sprite10.position = self.screen_width-820,140
+        self.mouth_sprite_list.append(self.mouth_sprite10)
+
+        self.mouth_sprite11 = arcade.Sprite(mouth[2],scale=0.3)
+        self.mouth_sprite11.position = self.screen_width-820,210
+        self.mouth_sprite_list.append(self.mouth_sprite11)
 
 
     def setup(self):
@@ -72,7 +94,71 @@ class MyGameWindow(arcade.Window):
             arcade.LBWH(-200,-700, self.screen_width+190,self.screen_height),
         )
 
+        if self.collision[0]:
+            i = self.collision[1][1]
+            if self.collision[1][0] == "eye":
+                self.eye_sprite_list[i].position = self.eyespos[i]
+                self.eye_sprite_curr = arcade.Sprite(eyes[i],scale=0.2)
+                self.eye_sprite_curr.position = self.pumpkin.position
+                self.curr_sprites.append(self.eye_sprite_curr)
+
+
+            self.collision = (False,(None,None))
+
         self.sprite_list.draw()
+        self.curr_sprites.draw()
+        self.eye_sprite_list.draw()
+        self.nose_sprite_list.draw()
+        self.mouth_sprite_list.draw()
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.held_sprite = None
+        pum = arcade.get_sprites_at_point((x,y),self.sprite_list)
+        eyes = arcade.get_sprites_at_point((x,y),self.eye_sprite_list)
+        nose = arcade.get_sprites_at_point((x,y),self.nose_sprite_list)
+        mouth = arcade.get_sprites_at_point((x,y),self.mouth_sprite_list)
+
+        if pum:
+            self.held_sprite = pum[-1]
+        if eyes:
+            self.held_sprite = eyes[-1]
+        if nose:
+            self.held_sprite = nose[-1]
+        if mouth:
+            self.held_sprite = mouth[-1]
+
+    def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
+        """ User moves mouse """
+
+        # If we are holding cards, move them with the mouse
+        if not self.held_sprite:
+            return
+        if self.held_sprite == self.pumpkin:
+            for spr in self.curr_sprites:
+                spr.position = x,y
+        self.held_sprite.position = x,y
+
+    def on_mouse_release(self, x: float, y: float, button: int,
+                         modifiers: int):
+        """ Called when the user presses a mouse button. """
+        if not self.held_sprite:
+            return
+        self.held_sprite = None
+
+    def on_update(self, delta_time):
+        for i in range(len(self.eye_sprite_list)):
+            if arcade.check_for_collision(self.pumpkin,self.eye_sprite_list[i]):
+                self.collision = (True, ("eye",i))
+
+        for i in range(len(self.nose_sprite_list)):
+            if arcade.check_for_collision(self.pumpkin,self.nose_sprite_list[i]):
+                self.collision = (True, ("nose",i))
+
+        for i in range(len(self.mouth_sprite_list)):
+            if arcade.check_for_collision(self.pumpkin,self.mouth_sprite_list[i]):
+                self.collision = (True, ("mouth",i))
+
+
 
 
 MyGameWindow(screen_width,screen_height,"Pumpkin Parlor")
