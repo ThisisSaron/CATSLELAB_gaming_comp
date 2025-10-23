@@ -35,6 +35,9 @@ class MyGameWindow(arcade.Window):
         self.start = time.time()
         self.lost = False
         self.won = False
+        self.score_count = 0
+        #HOW TO CHANGE THE FONT
+        self.score_text = arcade.Text(f"${self.score_count}",x=1550,y=850,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
@@ -170,7 +173,7 @@ class MyGameWindow(arcade.Window):
             self.start = time.time()
             self.gen_pumpkin = arcade.SpriteList()
             self.curr_sprites = arcade.SpriteList()
-            self.sprite_list[0].position = 300,180
+            self.pumpkin.position = 300,180
             self.lst[0] += 1
             self.lst[1] += 5
             self.lst[2] += 9
@@ -181,7 +184,10 @@ class MyGameWindow(arcade.Window):
                     print(self.lst,self.current_ob)
                     if obj not in self.current_ob:
                         self.lost = True
-
+                if not self.lost:
+                    self.score_count += 50
+                    self.score_text.text = f"${self.score_count}"
+                    self.current_ob = []
             self.submit = False
 
         if self.lost:
@@ -200,6 +206,7 @@ class MyGameWindow(arcade.Window):
         self.eye_sprite_list.draw()
         self.nose_sprite_list.draw()
         self.mouth_sprite_list.draw()
+        self.score_text.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.held_sprite = None
