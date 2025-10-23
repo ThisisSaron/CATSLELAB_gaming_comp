@@ -21,7 +21,10 @@ class MyGameWindow(arcade.Window):
         self.screen_width = window.width
         self.screen_height = window.height
         self.eyespos = [(self.screen_width-420,5),(self.screen_width-420,70),(self.screen_width-420,130),(self.screen_width-420,150)]
+        self.nosepos = [(self.screen_width-620,20),(self.screen_width-620,120),(self.screen_width-620,160)]
+        self.mouthpos = [(self.screen_width-820,60),(self.screen_width-820,140),(self.screen_width-820,210)]
         self.curr_sprites = arcade.SpriteList()
+        self.current_ob = []
 
         print(self.screen_width,self.screen_height)
 
@@ -53,28 +56,28 @@ class MyGameWindow(arcade.Window):
                     #nose
         self.nose_sprite_list = arcade.SpriteList()
         self.nose_sprite6 = arcade.Sprite(nose[0],scale=0.5)
-        self.nose_sprite6.position = self.screen_width-620,20
+        self.nose_sprite6.position = self.nosepos[0]
         self.nose_sprite_list.append(self.nose_sprite6)
 
         self.nose_sprite7 = arcade.Sprite(nose[1],scale=0.5)
-        self.nose_sprite7.position = self.screen_width-620,120
+        self.nose_sprite7.position = self.nosepos[1]
         self.nose_sprite_list.append(self.nose_sprite7)
 
         self.nose_sprite8 = arcade.Sprite(nose[2],scale=0.5)
-        self.nose_sprite8.position = self.screen_width-620,160
+        self.nose_sprite8.position = self.nosepos[2]
         self.nose_sprite_list.append(self.nose_sprite8)
                    # MOUTH
         self.mouth_sprite_list = arcade.SpriteList()
         self.mouth_sprite9 = arcade.Sprite(mouth[-1],scale=0.3)
-        self.mouth_sprite9.position = self.screen_width-820,60
+        self.mouth_sprite9.position = self.mouthpos[0]
         self.mouth_sprite_list.append(self.mouth_sprite9)
 
         self.mouth_sprite10 = arcade.Sprite(mouth[1],scale=0.3)
-        self.mouth_sprite10.position = self.screen_width-820,140
+        self.mouth_sprite10.position = self.mouthpos[1]
         self.mouth_sprite_list.append(self.mouth_sprite10)
 
         self.mouth_sprite11 = arcade.Sprite(mouth[2],scale=0.3)
-        self.mouth_sprite11.position = self.screen_width-820,210
+        self.mouth_sprite11.position = self.mouthpos[2]
         self.mouth_sprite_list.append(self.mouth_sprite11)
 
 
@@ -97,13 +100,36 @@ class MyGameWindow(arcade.Window):
         if self.collision[0]:
             i = self.collision[1][1]
             if self.collision[1][0] == "eye":
-                self.eye_sprite_list[i].position = self.eyespos[i]
-                self.eye_sprite_curr = arcade.Sprite(eyes[i],scale=0.2)
-                self.eye_sprite_curr.position = self.pumpkin.position
-                self.curr_sprites.append(self.eye_sprite_curr)
+                if i+1 not in self.current_ob: 
+                        self.eye_sprite_list[i].position = self.eyespos[i]
+                        self.eye_sprite_curr = arcade.Sprite(eyes[i],scale=0.2)
+                        self.eye_sprite_curr.position = self.pumpkin.position
+                        self.curr_sprites.append(self.eye_sprite_curr)
+                        self.current_ob.append(i+1)
+                else:
+                    self.eye_sprite_list[i].position = self.eyespos[i]
+            elif self.collision[1][0] == "nose":
+                if i+5 not in self.current_ob: 
+                        self.nose_sprite_list[i].position = self.nosepos[i]
+                        self.nose_sprite_curr = arcade.Sprite(nose[i],scale=0.3)
+                        self.nose_sprite_curr.position = self.pumpkin.position[0],self.pumpkin.position[1]
+                        self.curr_sprites.append(self.nose_sprite_curr)
+                        self.current_ob.append(i+5) #CHANGE THIS IF YOU ADD MORE EYES
+                else:
+                    self.nose_sprite_list[i].position = self.nosepos[i]
+            elif self.collision[1][0] == "mouth":
+                if i+9 not in self.current_ob: 
+                        self.mouth_sprite_list[i].position = self.mouthpos[i]
+                        self.mouth_sprite_curr = arcade.Sprite(mouth[i],scale=0.3)
+                        self.mouth_sprite_curr.position = self.pumpkin.position
+                        self.curr_sprites.append(self.mouth_sprite_curr)
+                        self.current_ob.append(i+9) #CHANGE THIS IF YOU ADD MORE EYES
+                else:
+                    self.mouth_sprite_list[i].position = self.mouthpos[i]
 
 
             self.collision = (False,(None,None))
+
 
         self.sprite_list.draw()
         self.curr_sprites.draw()
