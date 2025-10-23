@@ -1,15 +1,28 @@
 import arcade
 import pyglet
+import random
+import time
 
 display = pyglet.display.get_display()
 screen = display.get_default_screen()
+
 
 screen_width = screen.width
 screen_height = screen.height
 
 eyes = ["faces/1eyes.PNG","faces/2eyes.PNG","faces/3eyes.PNG","faces/4eyes.PNG","faces/5eyes.PNG"]
 nose = ["faces/6nose.PNG","faces/7nose.PNG","faces/8nose.PNG"]
-mouth = ["faces/10mouth.PNG","faces/11mouth.PNG","faces/12mouth.PNG","faces/13mouth.PNG" ]
+mouth = ["faces/9mouth.PNG","faces/11mouth.PNG","faces/12mouth.PNG","faces/13mouth.PNG" ]
+pumpkin = "Images/pumpkin.png"
+
+start = time.time()
+
+def gen_random_pumpkins():
+    eye = random.randint(0,3)
+    nose = random.randint(0,2)
+    mouth = random.randint(0,3)
+
+    return [eye,nose,mouth]
 
 
 class MyGameWindow(arcade.Window):
@@ -26,12 +39,14 @@ class MyGameWindow(arcade.Window):
         self.curr_sprites = arcade.SpriteList()
         self.current_ob = []
 
+        self.gen_pumpkin = arcade.SpriteList()
+
         print(self.screen_width,self.screen_height)
 
         self.background = arcade.load_texture("Images\BackGround.png")
         self.table =  arcade.load_texture("Images/table.jpeg")
         self.sprite_list = arcade.SpriteList()
-        self.pumpkin = arcade.Sprite("Images/pumpkin.png",scale=0.4)
+        self.pumpkin = arcade.Sprite(pumpkin,scale=0.4)
         self.pumpkin.position = 300,180
         self.sprite_list.append(self.pumpkin)
 
@@ -68,7 +83,7 @@ class MyGameWindow(arcade.Window):
         self.nose_sprite_list.append(self.nose_sprite8)
                    # MOUTH
         self.mouth_sprite_list = arcade.SpriteList()
-        self.mouth_sprite9 = arcade.Sprite(mouth[-1],scale=0.3)
+        self.mouth_sprite9 = arcade.Sprite(mouth[0],scale=0.3)
         self.mouth_sprite9.position = self.mouthpos[0]
         self.mouth_sprite_list.append(self.mouth_sprite9)
 
@@ -130,9 +145,25 @@ class MyGameWindow(arcade.Window):
 
             self.collision = (False,(None,None))
 
+        if not self.gen_pumpkin and time.time() - start > 10:    
+            lst = gen_random_pumpkins()
+            self.p = arcade.Sprite(pumpkin,scale=0.4)
+            self.p.position = 600,500
+            self.gen_pumpkin.append(self.p)
+            self.e = arcade.Sprite(eyes[lst[0]],scale=0.2)
+            self.e.position = self.p.position
+            self.gen_pumpkin.append(self.e)
+            self.n = arcade.Sprite(nose[lst[1]],scale=0.3)
+            self.n.position = self.p.position
+            self.gen_pumpkin.append(self.n)
+            self.m = arcade.Sprite(mouth[lst[2]],scale=0.3)
+            self.m.position = self.p.position
+            self.gen_pumpkin.append(self.m)
+
 
         self.sprite_list.draw()
         self.curr_sprites.draw()
+        self.gen_pumpkin.draw()
         self.eye_sprite_list.draw()
         self.nose_sprite_list.draw()
         self.mouth_sprite_list.draw()
