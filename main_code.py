@@ -237,8 +237,8 @@ class MyGameWindow(arcade.Window):
                     self.client_sprites = arcade.SpriteList()
                     self.client1 = None
                     self.timer_start = None
-            self.though_bubble_sprite = arcade.SpriteList()
                     self.correct_playback = correct_sound.play()
+            self.though_bubble_sprite = arcade.SpriteList()
             self.submit = False
 
         if self.lost: #DECIDE IF WE WANT TO END THE GAME OR DECREMENT MONEY
