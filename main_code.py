@@ -38,6 +38,7 @@ class MyGameWindow(arcade.Window):
     def __init__(self,width,height,title,resizable = True):
         super().__init__(width,height,title,resizable=resizable)
         #self.set_location(400,200)
+        self.welcome_page = True
         self.held_sprite = None
         self.collision = [False,(None,None)]
         self.submit = False
@@ -51,7 +52,7 @@ class MyGameWindow(arcade.Window):
 
         self.score_count = 0
         #HOW TO CHANGE THE FONT
-        self.score_text = arcade.Text(f"${self.score_count}",x=1850,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
+        self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
@@ -64,7 +65,7 @@ class MyGameWindow(arcade.Window):
         self.gen_pumpkin = arcade.SpriteList()
 
         print(self.screen_width,self.screen_height)
-
+        self.welcome = arcade.load_texture("Images/welcomepage.png")
         self.background = arcade.load_texture("Images/BackGround.png")
         self.background = arcade.load_texture("Images/BackGround.png")
         self.table =  arcade.load_texture("Images/table.jpeg")
@@ -129,138 +130,147 @@ class MyGameWindow(arcade.Window):
     def on_draw(self):
         self.clear()
         #ADD BACKGROUND MUSIC
-        arcade.draw_texture_rect(
-            self.background,
-            arcade.LBWH(-10, -1, self.screen_width + 10,self.screen_height),
-        )
+        if not self.welcome_page:
+            arcade.draw_texture_rect(
+                self.background,
+                arcade.LBWH(-10, -1, self.screen_width + 10,self.screen_height),
+            )
 
-        self.client_sprites.draw()
+            self.client_sprites.draw()
 
-        arcade.draw_texture_rect(
-            self.table,
-            arcade.LBWH(35,-660, self.screen_width+150,self.screen_height),
-        )
+            arcade.draw_texture_rect(
+                self.table,
+                arcade.LBWH(35,-660, self.screen_width+150,self.screen_height),
+            )
 
-        if self.collision[0]:
-            i = self.collision[1][1]
-            if self.collision[1][0] == "eye":
-                if i+1 not in self.current_ob: 
+            if self.collision[0]:
+                i = self.collision[1][1]
+                if self.collision[1][0] == "eye":
+                    if i+1 not in self.current_ob: 
+                            self.eye_sprite_list[i].position = self.eyespos[i]
+                            self.eye_sprite_curr = arcade.Sprite(eyes[i],scale=0.2)
+                            self.eye_sprite_curr.position = self.pumpkin.position
+                            self.curr_sprites.append(self.eye_sprite_curr)
+                            self.current_ob.append(i+1)
+                            self.carving_playback = carving_sound.play()
+                    else:
                         self.eye_sprite_list[i].position = self.eyespos[i]
-                        self.eye_sprite_curr = arcade.Sprite(eyes[i],scale=0.2)
-                        self.eye_sprite_curr.position = self.pumpkin.position
-                        self.curr_sprites.append(self.eye_sprite_curr)
-                        self.current_ob.append(i+1)
-                        self.carving_playback = carving_sound.play()
-                else:
-                    self.eye_sprite_list[i].position = self.eyespos[i]
-            elif self.collision[1][0] == "nose":
-                if i+5 not in self.current_ob: 
+                elif self.collision[1][0] == "nose":
+                    if i+5 not in self.current_ob: 
+                            self.nose_sprite_list[i].position = self.nosepos[i]
+                            self.nose_sprite_curr = arcade.Sprite(nose[i],scale=0.3)
+                            self.nose_sprite_curr.position = self.pumpkin.position[0],self.pumpkin.position[1]
+                            self.curr_sprites.append(self.nose_sprite_curr)
+                            self.current_ob.append(i+5) #CHANGE THIS IF YOU ADD MORE EYES
+                            self.carving_playback = carving_sound.play()
+                    else:
                         self.nose_sprite_list[i].position = self.nosepos[i]
-                        self.nose_sprite_curr = arcade.Sprite(nose[i],scale=0.3)
-                        self.nose_sprite_curr.position = self.pumpkin.position[0],self.pumpkin.position[1]
-                        self.curr_sprites.append(self.nose_sprite_curr)
-                        self.current_ob.append(i+5) #CHANGE THIS IF YOU ADD MORE EYES
-                        self.carving_playback = carving_sound.play()
-                else:
-                    self.nose_sprite_list[i].position = self.nosepos[i]
-            elif self.collision[1][0] == "mouth":
-                if i+9 not in self.current_ob: 
+                elif self.collision[1][0] == "mouth":
+                    if i+9 not in self.current_ob: 
+                            self.mouth_sprite_list[i].position = self.mouthpos[i]
+                            self.mouth_sprite_curr = arcade.Sprite(mouth[i],scale=0.3)
+                            self.mouth_sprite_curr.position = self.pumpkin.position
+                            self.curr_sprites.append(self.mouth_sprite_curr)
+                            self.current_ob.append(i+9) #CHANGE THIS IF YOU ADD MORE EYES
+                            self.carving_playback = carving_sound.play()
+                    else:
                         self.mouth_sprite_list[i].position = self.mouthpos[i]
-                        self.mouth_sprite_curr = arcade.Sprite(mouth[i],scale=0.3)
-                        self.mouth_sprite_curr.position = self.pumpkin.position
-                        self.curr_sprites.append(self.mouth_sprite_curr)
-                        self.current_ob.append(i+9) #CHANGE THIS IF YOU ADD MORE EYES
-                        self.carving_playback = carving_sound.play()
-                else:
-                    self.mouth_sprite_list[i].position = self.mouthpos[i]
-            self.collision = (False,(None,None))
+                self.collision = (False,(None,None))
 
-        if not self.gen_pumpkin and time.time() - self.start > 10:
-            self.i = random.randint(0,2)
-            self.timer_start = time.time()
-            self.lst = gen_random_pumpkins()
-            self.p = arcade.Sprite(pumpkin,scale=0.2)
-            self.p.position = 1180,600
-            self.gen_pumpkin.append(self.p)
-            self.e = arcade.Sprite(eyes[self.lst[0]],scale=0.1)
-            self.e.position = self.p.position
-            self.gen_pumpkin.append(self.e)
-            self.n = arcade.Sprite(nose[self.lst[1]],scale=0.15)
-            self.n.position = self.p.position
-            self.gen_pumpkin.append(self.n)
-            self.m = arcade.Sprite(mouth[self.lst[2]],scale=0.15)
-            self.m.position = self.p.position
-            self.gen_pumpkin.append(self.m)
-            self.TB = arcade.Sprite("Images/thought_bubble.png",scale=0.4)
-            self.TB.position = self.p.position[0] , self.p.position[1]-25
-            self.though_bubble_sprite.append(self.TB)
+            if not self.gen_pumpkin and time.time() - self.start > 5:
+                self.i = random.randint(0,2)
+                self.timer_start = time.time()
+                self.lst = gen_random_pumpkins()
+                self.p = arcade.Sprite(pumpkin,scale=0.2)
+                self.p.position = 1180,600
+                self.gen_pumpkin.append(self.p)
+                self.e = arcade.Sprite(eyes[self.lst[0]],scale=0.1)
+                self.e.position = self.p.position
+                self.gen_pumpkin.append(self.e)
+                self.n = arcade.Sprite(nose[self.lst[1]],scale=0.15)
+                self.n.position = self.p.position
+                self.gen_pumpkin.append(self.n)
+                self.m = arcade.Sprite(mouth[self.lst[2]],scale=0.15)
+                self.m.position = self.p.position
+                self.gen_pumpkin.append(self.m)
+                self.TB = arcade.Sprite("Images/thought_bubble.png",scale=0.4)
+                self.TB.position = self.p.position[0] , self.p.position[1]-25
+                self.though_bubble_sprite.append(self.TB)
 
-            
-        if self.timer_start:
-            if time.time() - self.timer_start < 7:
-                self.client1 = arcade.Sprite(clients[self.i][0],scale=0.3)
-                self.client1.position = 880,350
-                self.client_sprites.append(self.client1)
-            elif time.time() - self.timer_start < 10:
-                self.client_sprites = arcade.SpriteList()
-                self.client1 = arcade.Sprite(clients[self.i][1],scale=0.3)
-                self.client1.position = 880,350
-                self.client_sprites.append(self.client1)
-            else:
-                self.client_sprites = arcade.SpriteList()
-                self.client1 = arcade.Sprite(clients[self.i][2],scale=0.3)
-                self.client1.position = 880,350
-                self.client_sprites.append(self.client1)
-
-
-        if self.submit:
-            self.start = time.time()
-            self.gen_pumpkin = arcade.SpriteList()
-            self.curr_sprites = arcade.SpriteList()
-            self.pumpkin.position = 300,180
-            self.lst[0] += 1
-            self.lst[1] += 5
-            self.lst[2] += 9
-            if len(self.lst) != len(self.current_ob):
-                self.lost = True
-            else:
-                for obj in self.lst:
-                    print(self.lst,self.current_ob)
-                    if obj == 12 and 11 in self.current_ob:
-                        continue
-                    if obj not in self.current_ob:
-                        self.lost = True
-                if not self.lost:
-                    self.score_count += 50
-                    self.score_text.text = f"${self.score_count}"
-                    self.current_ob = []
+                
+            if self.timer_start:
+                if time.time() - self.timer_start < 5:
+                    self.client1 = arcade.Sprite(clients[self.i][0],scale=0.3)
+                    self.client1.position = 880,350
+                    self.client_sprites.append(self.client1)
+                elif time.time() - self.timer_start < 7:
                     self.client_sprites = arcade.SpriteList()
-                    self.client1 = None
-                    self.timer_start = None
-                    self.correct_playback = correct_sound.play()
-            self.though_bubble_sprite = arcade.SpriteList()
-            self.submit = False
-
-        if self.lost: #DECIDE IF WE WANT TO END THE GAME OR DECREMENT MONEY
-            arcade.draw_text("GAME OVER",600,500,arcade.color.WHITE,24,width=400,align="center")
-            self.sprite_list= arcade.SpriteList()
-            self.curr_sprites= arcade.SpriteList()
-            self.gen_pumpkin= arcade.SpriteList()
-            self.eye_sprite_list= arcade.SpriteList()
-            self.nose_sprite_list= arcade.SpriteList()
-            self.mouth_sprite_list= arcade.SpriteList()
-            self.though_bubble_sprite = arcade.SpriteList()
+                    self.client1 = arcade.Sprite(clients[self.i][1],scale=0.3)
+                    self.client1.position = 880,350
+                    self.client_sprites.append(self.client1)
+                elif time.time() - self.timer_start < 10:
+                    self.client_sprites = arcade.SpriteList()
+                    self.client1 = arcade.Sprite(clients[self.i][2],scale=0.3)
+                    self.client1.position = 880,350
+                    self.client_sprites.append(self.client1)
+                else:
+                    self.current_ob = []
+                    self.submit = True
 
 
-        self.sprite_list.draw()
-        self.curr_sprites.draw()
-        self.though_bubble_sprite.draw()
-        self.gen_pumpkin.draw()
-        self.eye_sprite_list.draw()
-        self.nose_sprite_list.draw()
-        self.mouth_sprite_list.draw()
-        self.score_text.draw()
+            if self.submit:
+                self.start = time.time()
+                self.gen_pumpkin = arcade.SpriteList()
+                self.curr_sprites = arcade.SpriteList()
+                self.pumpkin.position = 300,180
+                self.lst[0] += 1
+                self.lst[1] += 5
+                self.lst[2] += 9
+                if len(self.lst) != len(self.current_ob):
+                    self.lost = True
+                else:
+                    for obj in self.lst:
+                        print(self.lst,self.current_ob)
+                        if obj == 12 and 11 in self.current_ob:
+                            continue
+                        if obj not in self.current_ob:
+                            self.lost = True
+                    if not self.lost:
+                        self.score_count += 50
+                        self.score_text.text = f"${self.score_count}"
+                        self.current_ob = []
+                        self.client_sprites = arcade.SpriteList()
+                        self.client1 = None
+                        self.timer_start = None
+                        self.correct_playback = correct_sound.play()
+                self.though_bubble_sprite = arcade.SpriteList()
+                self.submit = False
 
+            if self.lost: #DECIDE IF WE WANT TO END THE GAME OR DECREMENT MONEY
+                arcade.draw_text("GAME OVER",600,500,arcade.color.WHITE,24,width=400,align="center")
+                self.sprite_list= arcade.SpriteList()
+                self.curr_sprites= arcade.SpriteList()
+                self.gen_pumpkin= arcade.SpriteList()
+                self.eye_sprite_list= arcade.SpriteList()
+                self.nose_sprite_list= arcade.SpriteList()
+                self.mouth_sprite_list= arcade.SpriteList()
+                self.client_sprites = arcade.SpriteList()
+                self.though_bubble_sprite = arcade.SpriteList()
+
+
+            self.sprite_list.draw()
+            self.curr_sprites.draw()
+            self.though_bubble_sprite.draw()
+            self.gen_pumpkin.draw()
+            self.eye_sprite_list.draw()
+            self.nose_sprite_list.draw()
+            self.mouth_sprite_list.draw()
+            self.score_text.draw()
+        else:
+            arcade.draw_texture_rect(
+                self.welcome,
+                arcade.LBWH(-10, -1, self.screen_width + 10,self.screen_height),
+            )
     def on_mouse_press(self, x, y, button, modifiers):
         self.held_sprite = None
         pum = arcade.get_sprites_at_point((x,y),self.sprite_list)
@@ -314,8 +324,9 @@ class MyGameWindow(arcade.Window):
                 self.sprite_list.append(self.pumpkin)
 
                 self.submit = True
-
-
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.SPACE:
+            self.welcome_page = False
 
 
 MyGameWindow(screen_width,screen_height,"Pumpkin Parlor")
