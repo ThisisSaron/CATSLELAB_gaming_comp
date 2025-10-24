@@ -29,12 +29,16 @@ class MyGameWindow(arcade.Window):
     def __init__(self,width,height,title,resizable = True):
         super().__init__(width,height,title,resizable=resizable)
         #self.set_location(400,200)
+        self.held_sprite = None
         self.collision = [False,(None,None)]
         self.submit = False
         self.lst = []
         self.start = time.time()
         self.lost = False
-        self.won = False
+        self.timer = 10
+        self.timer_start = 0
+        self.client_sprites = arcade.SpriteList()
+
         self.score_count = 0
         #HOW TO CHANGE THE FONT
         self.score_text = arcade.Text(f"${self.score_count}",x=1550,y=850,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
@@ -109,11 +113,13 @@ class MyGameWindow(arcade.Window):
 
     def on_draw(self):
         self.clear()
-        #background render
+        #ADD BACKGROUND MUSIC
         arcade.draw_texture_rect(
             self.background,
             arcade.LBWH(-10, -1, self.screen_width-250,self.screen_height),
         )
+
+        self.client_sprites.draw()
 
         arcade.draw_texture_rect(
             self.table,
@@ -121,6 +127,7 @@ class MyGameWindow(arcade.Window):
         )
 
         if self.collision[0]:
+            #SOUND EFFECT HEREEEEEEEEE
             i = self.collision[1][1]
             if self.collision[1][0] == "eye":
                 if i+1 not in self.current_ob: 
@@ -151,22 +158,38 @@ class MyGameWindow(arcade.Window):
                     self.mouth_sprite_list[i].position = self.mouthpos[i]
             self.collision = (False,(None,None))
 
-        if not self.gen_pumpkin and time.time() - self.start > 10:    
+        if not self.gen_pumpkin and time.time() - self.start > 10:
+            self.timer_start = time.time()
             self.lst = gen_random_pumpkins()
-            self.p = arcade.Sprite(pumpkin,scale=0.4)
+            self.p = arcade.Sprite(pumpkin,scale=0.3)
             self.p.position = 600,500
             self.gen_pumpkin.append(self.p)
-            self.e = arcade.Sprite(eyes[self.lst[0]],scale=0.2)
+            self.e = arcade.Sprite(eyes[self.lst[0]],scale=0.1)
             self.e.position = self.p.position
             self.gen_pumpkin.append(self.e)
-            self.n = arcade.Sprite(nose[self.lst[1]],scale=0.3)
+            self.n = arcade.Sprite(nose[self.lst[1]],scale=0.2)
             self.n.position = self.p.position
             self.gen_pumpkin.append(self.n)
-            self.m = arcade.Sprite(mouth[self.lst[2]],scale=0.3)
+            self.m = arcade.Sprite(mouth[self.lst[2]],scale=0.2)
             self.m.position = self.p.position
             self.gen_pumpkin.append(self.m)
 
             
+        if self.timer_start:
+            if time.time() - self.timer_start < 7:
+                self.client1 = arcade.Sprite("sprites/frankenstein1.PNG",scale=0.3)
+                self.client1.position = 400,350
+                self.client_sprites.append(self.client1)
+            elif time.time() - self.timer_start < 10:
+                self.client_sprites = arcade.SpriteList()
+                self.client1 = arcade.Sprite("sprites/frankenstein2.PNG",scale=0.3)
+                self.client1.position = 400,350
+                self.client_sprites.append(self.client1)
+            else:
+                self.client_sprites = arcade.SpriteList()
+                self.client1 = arcade.Sprite("sprites/frankenstein3.PNG",scale=0.3)
+                self.client1.position = 400,350
+                self.client_sprites.append(self.client1)
 
 
         if self.submit:
@@ -182,6 +205,8 @@ class MyGameWindow(arcade.Window):
             else:
                 for obj in self.lst:
                     print(self.lst,self.current_ob)
+                    if obj == 12 and 11 in self.current_ob:
+                        continue
                     if obj not in self.current_ob:
                         self.lost = True
                 if not self.lost:
@@ -190,7 +215,7 @@ class MyGameWindow(arcade.Window):
                     self.current_ob = []
             self.submit = False
 
-        if self.lost:
+        if self.lost: #DECIDE IF WE WANT TO END THE GAME OR DECREMENT MONEY
             arcade.draw_text("GAME OVER",600,500,arcade.color.WHITE,24,width=400,align="center")
             self.sprite_list= arcade.SpriteList()
             self.curr_sprites= arcade.SpriteList()
