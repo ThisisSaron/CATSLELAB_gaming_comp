@@ -2,10 +2,10 @@ import arcade
 import pyglet
 import random
 import time
+from arcade import Sound
 
 display = pyglet.display.get_display()
 screen = display.get_default_screen()
-
 
 screen_width = screen.width
 screen_height = screen.height
@@ -21,7 +21,10 @@ trash_cans = []
 
 #pumpkins = ["Images/pumpkin1.png", "Images/pumpkin2.png", "Images/pumpkin3.png", "Images/pumpkin4.png" ]
 
-
+# sound and bg music
+background_music = arcade.load_sound("sound/background_music.mp3")
+carving_sound = Sound("sound/saw.mp3")
+correct_sound = Sound("sound/correct.mp3")
 
 def gen_random_pumpkins():
     eye = random.randint(0,3)
@@ -62,6 +65,7 @@ class MyGameWindow(arcade.Window):
 
         print(self.screen_width,self.screen_height)
 
+        self.background = arcade.load_texture("Images/BackGround.png")
         self.background = arcade.load_texture("Images/BackGround.png")
         self.table =  arcade.load_texture("Images/table.jpeg")
         self.sprite_list = arcade.SpriteList()
@@ -138,7 +142,6 @@ class MyGameWindow(arcade.Window):
         )
 
         if self.collision[0]:
-            #SOUND EFFECT HEREEEEEEEEE
             i = self.collision[1][1]
             if self.collision[1][0] == "eye":
                 if i+1 not in self.current_ob: 
@@ -147,6 +150,7 @@ class MyGameWindow(arcade.Window):
                         self.eye_sprite_curr.position = self.pumpkin.position
                         self.curr_sprites.append(self.eye_sprite_curr)
                         self.current_ob.append(i+1)
+                        self.carving_playback = carving_sound.play()
                 else:
                     self.eye_sprite_list[i].position = self.eyespos[i]
             elif self.collision[1][0] == "nose":
@@ -156,6 +160,7 @@ class MyGameWindow(arcade.Window):
                         self.nose_sprite_curr.position = self.pumpkin.position[0],self.pumpkin.position[1]
                         self.curr_sprites.append(self.nose_sprite_curr)
                         self.current_ob.append(i+5) #CHANGE THIS IF YOU ADD MORE EYES
+                        self.carving_playback = carving_sound.play()
                 else:
                     self.nose_sprite_list[i].position = self.nosepos[i]
             elif self.collision[1][0] == "mouth":
@@ -165,6 +170,7 @@ class MyGameWindow(arcade.Window):
                         self.mouth_sprite_curr.position = self.pumpkin.position
                         self.curr_sprites.append(self.mouth_sprite_curr)
                         self.current_ob.append(i+9) #CHANGE THIS IF YOU ADD MORE EYES
+                        self.carving_playback = carving_sound.play()
                 else:
                     self.mouth_sprite_list[i].position = self.mouthpos[i]
             self.collision = (False,(None,None))
@@ -232,6 +238,7 @@ class MyGameWindow(arcade.Window):
                     self.client1 = None
                     self.timer_start = None
             self.though_bubble_sprite = arcade.SpriteList()
+                    self.correct_playback = correct_sound.play()
             self.submit = False
 
         if self.lost: #DECIDE IF WE WANT TO END THE GAME OR DECREMENT MONEY
@@ -312,4 +319,5 @@ class MyGameWindow(arcade.Window):
 
 
 MyGameWindow(screen_width,screen_height,"Pumpkin Parlor")
+arcade.play_sound(background_music, volume=0.5, loop=True)
 arcade.run()
