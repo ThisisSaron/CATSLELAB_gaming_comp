@@ -30,6 +30,10 @@ carving2 = Sound("sound/saw2.m4a")
 carving3 = Sound("sound/saw3.m4a")
 carvings = [carving1, carving2, carving3]
 
+# custom fonts
+arcade.load_font("fonts/Halloweendy.otf")
+arcade.load_font("fonts/SCOREBOARD.ttf")
+
 def gen_random_pumpkins():
     eye = random.randint(0,3)
     nose = random.randint(0,2)
@@ -56,7 +60,8 @@ class MyGameWindow(arcade.Window):
 
         self.score_count = 0
         #HOW TO CHANGE THE FONT
-        self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
+        #self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
+        self.score_text = arcade.Text(f"${self.score_count}",x=500,y=500,color =arcade.color.YELLOW,font_size=30,align="right", font_name="SCOREBOARD")
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
