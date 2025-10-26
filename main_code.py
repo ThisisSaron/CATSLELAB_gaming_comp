@@ -12,7 +12,7 @@ screen_height = screen.height
 
 eyes = ["faces/1eyes.PNG","faces/2eyes.PNG","faces/3eyes.PNG","faces/4eyes.PNG","faces/5eyes.PNG"]
 nose = ["faces/6nose.PNG","faces/7nose.PNG","faces/8nose.PNG"]
-mouth = ["faces/9mouth.PNG","faces/11mouth.PNG","faces/12mouth.PNG","faces/13mouth.PNG" ]
+mouth = ["faces/9mouth.PNG","faces/13mouth.PNG","faces/12mouth.PNG","faces/13mouth.PNG" ]
 pumpkin = "Images/pumpkin2.png"
 clients = [("sprites/dracula1.PNG","sprites/dracula2.PNG","sprites/dracula3.PNG"),
             ("sprites/frankenstein1.PNG","sprites/frankenstein2.PNG","sprites/frankenstein3.PNG"),
