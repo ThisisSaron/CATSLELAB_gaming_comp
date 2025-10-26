@@ -57,7 +57,7 @@ class MyGameWindow(arcade.Window):
         self.lst = []
         self.start = time.time()
         self.lost = False
-        self.timer = 10
+        self.timer = 5
         self.timer_start = 0
         self.i = None
         self.client_sprites = arcade.SpriteList()
@@ -195,7 +195,7 @@ class MyGameWindow(arcade.Window):
                         self.mouth_sprite_list[i].position = self.mouthpos[i]
                 self.collision = (False,(None,None))
 
-            if not self.gen_pumpkin and time.time() - self.start > 3:
+            if not self.gen_pumpkin and time.time() - self.start > self.timer:
                 self.i = random.randint(0,2)
                 self.timer_start = time.time()
                 self.lst = gen_random_pumpkins()
@@ -217,24 +217,25 @@ class MyGameWindow(arcade.Window):
 
                 
             if self.timer_start:
-                if time.time() - self.timer_start < 5:
+                if time.time() - self.timer_start < self.timer:
                     self.client1 = arcade.Sprite(clients[self.i][0],scale=0.3)
                     self.client1.position = 880,350
                     self.client_sprites.append(self.client1)
-                elif time.time() - self.timer_start < 7:
+                elif time.time() - self.timer_start < self.timer+2:
                     self.client_sprites = arcade.SpriteList()
                     self.client1 = arcade.Sprite(clients[self.i][1],scale=0.3)
                     self.client1.position = 880,350
                     self.client_sprites.append(self.client1)
                     self.pay = 35
-                elif time.time() - self.timer_start < 10:
+                elif time.time() - self.timer_start < self.timer+5:
                     self.client_sprites = arcade.SpriteList()
                     self.client1 = arcade.Sprite(clients[self.i][2],scale=0.3)
                     self.client1.position = 880,350
                     self.client_sprites.append(self.client1)
                     self.pay = 20
                 else:
-                    self.pay = 50
+                    self.score_count -= 10
+                    self.score_text.text = f"${self.score_count}"
                     #MAD SOUND HEREEEEEEEE
                     self.start = time.time()
                     self.gen_pumpkin = arcade.SpriteList()
@@ -285,6 +286,15 @@ class MyGameWindow(arcade.Window):
 
 
             self.time_text.text = f"{int(self.total_time - (time.time() - self.time_begin)//1)}"
+            if int(self.time_text.text) > 50:
+                self.timer = 5
+            elif int(self.time_text.text) > 40:
+                self.timer = 4
+            elif int(self.time_text.text) > 30:
+                self.timer = 3
+            elif int(self.time_text.text) > 20:
+                self.timer = 2
+
             if int(self.time_text.text) <= 0:
                 arcade.draw_text("GAME OVER",700,500,arcade.color.WHITE,24,width=600,align="center")
                 arcade.draw_text(f"Your score was: {self.score_text.text}",700,470,arcade.color.WHITE,24,width=600,align="center")
@@ -310,6 +320,8 @@ class MyGameWindow(arcade.Window):
             self.mouth_sprite_list.draw()
             self.score_text.draw()
             self.time_text.draw()
+
+            print(self.timer)
         else:
             self.time_begin = time.time()
             arcade.draw_texture_rect(
