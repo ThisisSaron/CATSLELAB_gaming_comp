@@ -305,6 +305,8 @@ class MyGameWindow(arcade.Window):
                 self.welcome,
                 arcade.LBWH(-10, -1, self.screen_width + 10,self.screen_height),
             )
+            arcade.draw_text(f"PRESS SPACE TO START",700,20,arcade.color.WHITE,24,width=600,align="center")
+
     def on_mouse_press(self, x, y, button, modifiers):
         self.held_sprite = None
         pum = arcade.get_sprites_at_point((x,y),self.sprite_list)
