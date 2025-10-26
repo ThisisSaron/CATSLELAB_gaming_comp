@@ -25,6 +25,7 @@ trash_can = "trashcan.png"
 background_music = arcade.load_sound("sound/background_music.mp3")
 correct_sound = Sound("sound/correct.mp3")
 error_sound = Sound("sound/error.mp3")
+trash_sound = Sound("sound/trash.mp3")
 
 carving1 = Sound("sound/saw.mp3")
 carving2 = Sound("sound/saw2.m4a")
@@ -397,6 +398,7 @@ class MyGameWindow(arcade.Window):
             self.curr_sprites = arcade.SpriteList()
             self.score_count -= 15
             self.score_text.text = f"${self.score_count}"
+            self.trash_playback = trash_sound.play()
 
 
     def on_key_press(self, symbol, modifiers):
