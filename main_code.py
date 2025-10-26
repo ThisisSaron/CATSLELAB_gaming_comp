@@ -24,11 +24,16 @@ trash_can = "trashcan.png"
 # sound and bg music
 background_music = arcade.load_sound("sound/background_music.mp3")
 correct_sound = Sound("sound/correct.mp3")
+error_sound = Sound("sound/error.mp3")
 
 carving1 = Sound("sound/saw.mp3")
 carving2 = Sound("sound/saw2.m4a")
 carving3 = Sound("sound/saw3.m4a")
 carvings = [carving1, carving2, carving3]
+
+# custom fonts
+arcade.load_font("fonts/Halloweendy.otf")
+arcade.load_font("fonts/SCOREBOARD.ttf")
 
 def gen_random_pumpkins():
     eye = random.randint(0,3)
@@ -60,7 +65,8 @@ class MyGameWindow(arcade.Window):
         self.score_count = 0
         self.pay = 50
         #HOW TO CHANGE THE FONT
-        self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
+        #self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
+        self.score_text = arcade.Text(f"${self.score_count}",x=500,y=500,color =arcade.color.YELLOW,font_size=30,align="right", font_name="SCOREBOARD")
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
@@ -276,6 +282,7 @@ class MyGameWindow(arcade.Window):
                 self.timer_start = None
                 self.lost = False
                 #ERROR SOUND HEREEEEEE
+                self.error_playback = error_sound.play()   
 
 
             self.time_text.text = f"{int(self.total_time - (time.time() - self.time_begin)//1)}"
