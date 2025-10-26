@@ -208,7 +208,7 @@ class MyGameWindow(arcade.Window):
                         self.mouth_sprite_list[i].position = self.mouthpos[i]
                 self.collision = (False,(None,None))
 
-            if not self.gen_pumpkin and time.time() - self.start > 5:
+            if not self.gen_pumpkin and time.time() - self.start > 3:
                 self.i = random.randint(0,2)
                 self.timer_start = time.time()
                 self.lst = gen_random_pumpkins()
