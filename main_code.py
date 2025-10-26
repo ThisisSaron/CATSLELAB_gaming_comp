@@ -33,7 +33,8 @@ carvings = [carving1, carving2, carving3]
 
 # custom fonts
 arcade.load_font("fonts/Halloweendy.otf")
-arcade.load_font("fonts/SCOREBOARD.ttf")
+arcade.load_font("fonts/melted_monster.ttf")
+arcade.load_font("fonts/Halloween Fright.ttf")
 
 def gen_random_pumpkins():
     eye = random.randint(0,3)
@@ -49,7 +50,7 @@ class MyGameWindow(arcade.Window):
         #self.set_location(400,200)
         self.time_begin = 0
         self.total_time = 60
-        self.time_text = arcade.Text(f"${self.time_begin}",x=0,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
+        self.time_text = arcade.Text(f"${self.time_begin}",x=175,y=860,color =arcade.color.CARNELIAN,font_size=30,align="right", font_name="Halloween Fright")
         self.welcome_page = True
         self.held_sprite = None
         self.collision = [False,(None,None)]
@@ -65,8 +66,8 @@ class MyGameWindow(arcade.Window):
         self.score_count = 0
         self.pay = 50
         #HOW TO CHANGE THE FONT
-        #self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
-        self.score_text = arcade.Text(f"${self.score_count}",x=500,y=500,color =arcade.color.YELLOW,font_size=30,align="right", font_name="SCOREBOARD")
+        self.score_text = arcade.Text(f"${self.score_count}",x=1700,y=860,color =arcade.color.BROWN_NOSE,font_size=30,align="right", font_name='Halloween Fright')
+        #self.score_text = arcade.Text(f"${self.score_count}",x=500,y=500,color =arcade.color.YELLOW,font_size=30,align="right", font_name="SCOREBOARD")
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
@@ -81,8 +82,7 @@ class MyGameWindow(arcade.Window):
 
         print(self.screen_width,self.screen_height)
         self.welcome = arcade.load_texture("Images/welcomepage.png")
-        self.background = arcade.load_texture("Images/BackGround.png")
-        self.background = arcade.load_texture("Images/BackGround.png")
+        self.background = arcade.load_texture("Images/bg2.JPG")
         self.table =  arcade.load_texture("Images/table.jpeg")
         self.sprite_list = arcade.SpriteList()
         self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
@@ -328,7 +328,11 @@ class MyGameWindow(arcade.Window):
                 self.welcome,
                 arcade.LBWH(-10, -1, self.screen_width + 10,self.screen_height),
             )
-            arcade.draw_text(f"PRESS SPACE TO START",700,20,arcade.color.WHITE,24,width=600,align="center")
+
+            arcade.draw_text(f"YOU HAVE 60 SECONDS TO CARVE PUMPKINS THAT CUSTOMERS REQUEST",475,100,arcade.color.BUFF,24,width=600,align="center",font_name="Halloween Fright")
+            arcade.draw_text(f"Higher score for speed and accuracy (don't make them mad)",510,60,arcade.color.HANSA_YELLOW,24,width=600,align="center",font_name="Halloween Fright")
+
+            arcade.draw_text(f" -- PRESS SPACE TO START --",650,20,arcade.color.BUFF,24,width=600,align="center", font_name = "Halloween Fright")
 
     def on_mouse_press(self, x, y, button, modifiers):
         self.held_sprite = None
