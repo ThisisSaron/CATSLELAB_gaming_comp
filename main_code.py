@@ -19,7 +19,7 @@ clients = [("sprites/dracula1.PNG","sprites/dracula2.PNG","sprites/dracula3.PNG"
                 ("sprites/medusa1.PNG","sprites/medusa2.PNG","sprites/medusa3.PNG")]
 trash_can = "trashcan.png"
 
-#pumpkins = ["Images/pumpkin1.png", "Images/pumpkin2.png", "Images/pumpkin3.png", "Images/pumpkin4.png" ]
+#pumpkin = ["Images/pumpkin1.png", "Images/pumpkin2.png", "Images/pumpkin3.png", "Images/pumpkin4.png" ]
 
 # sound and bg music
 background_music = arcade.load_sound("sound/background_music.mp3")
@@ -42,6 +42,9 @@ class MyGameWindow(arcade.Window):
     def __init__(self,width,height,title,resizable = True):
         super().__init__(width,height,title,resizable=resizable)
         #self.set_location(400,200)
+        self.time_begin = 0
+        self.total_time = 60
+        self.time_text = arcade.Text(f"${self.time_begin}",x=0,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
         self.welcome_page = True
         self.held_sprite = None
         self.collision = [False,(None,None)]
@@ -55,14 +58,16 @@ class MyGameWindow(arcade.Window):
         self.client_sprites = arcade.SpriteList()
 
         self.score_count = 0
+        self.pay = 50
         #HOW TO CHANGE THE FONT
         self.score_text = arcade.Text(f"${self.score_count}",x=1825,y=950,color =arcade.color.YELLOW,font_size=30,align="right", font_name='Kenney Pixel')
         window = arcade.get_window()
         self.screen_width = window.width
         self.screen_height = window.height
-        self.eyespos = [(self.screen_width-90,5),(self.screen_width-105,70),(self.screen_width-110,110),(self.screen_width-120,130)]
+        self.eyespos = [(self.screen_width-90,5),(self.screen_width-100,70),(self.screen_width-110,95),(self.screen_width-120,135)]
         self.nosepos = [(self.screen_width-220,20),(self.screen_width-220,100),(self.screen_width-225,120)]
         self.mouthpos = [(self.screen_width-410,70),(self.screen_width-410,137),(self.screen_width-410,190)]
+        self.pumkinpos = [(340,180),[500,180],(340,320),(500,320)]
         self.curr_sprites = arcade.SpriteList()
         self.current_ob = []
 
@@ -75,11 +80,30 @@ class MyGameWindow(arcade.Window):
         self.table =  arcade.load_texture("Images/table.jpeg")
         self.sprite_list = arcade.SpriteList()
         self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
-        self.pumpkin.position = 320,180
+        self.pumpkin.position = 850,130
         self.sprite_list.append(self.pumpkin)
 
         self.though_bubble_sprite = arcade.SpriteList()
 
+                #Pumpkins
+        '''
+        self.pumkin_list = arcade.SpriteList()
+        self.pumpkin1 = arcade.Sprite(pumpkin[0],scale=0.3)
+        self.pumpkin1.position = self.pumkinpos
+        self.pumkin_list.append(self.pumpkin)[0]
+
+        self.pumpkin2 = arcade.Sprite(pumpkin,scale=0.3)
+        self.pumpkin.position = self.pumkinpos
+        self.pumkin_list.append(self.pumpkin)[1]
+
+        self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
+        self.pumpkin.position = self.pumkinpos
+        self.pumkin_list.append(self.pumpkin)[2]
+
+        self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
+        self.pumpkin.position = self.pumkinpos[3]
+        self.pumkin_list.append(self.pumpkin)
+        '''
                 #eyes
         self.eye_sprite_list = arcade.SpriteList()
         self.eye_sprite1 = arcade.Sprite(eyes[0],scale=0.2)
@@ -124,6 +148,12 @@ class MyGameWindow(arcade.Window):
         self.mouth_sprite11 = arcade.Sprite(mouth[2],scale=0.3)
         self.mouth_sprite11.position = self.mouthpos[2]
         self.mouth_sprite_list.append(self.mouth_sprite11)
+
+        self.trashcan_sprite = arcade.SpriteList()
+        self.trash_can = arcade.Sprite("Images/trashcan.png",scale=0.2)
+        self.trash_can.position = 70,50
+        self.trashcan_sprite.append(self.trash_can)
+
 
 
     def setup(self):
@@ -209,13 +239,17 @@ class MyGameWindow(arcade.Window):
                     self.client1 = arcade.Sprite(clients[self.i][1],scale=0.3)
                     self.client1.position = 880,350
                     self.client_sprites.append(self.client1)
+                    self.pay = 35
                 elif time.time() - self.timer_start < 10:
                     self.client_sprites = arcade.SpriteList()
                     self.client1 = arcade.Sprite(clients[self.i][2],scale=0.3)
                     self.client1.position = 880,350
                     self.client_sprites.append(self.client1)
+                    self.pay = 20
                 else:
                     self.current_ob = []
+                    self.pay = 0
+                    #MAD SOUND HEREEEEEEEE
                     self.submit = True
 
 
@@ -223,7 +257,7 @@ class MyGameWindow(arcade.Window):
                 self.start = time.time()
                 self.gen_pumpkin = arcade.SpriteList()
                 self.curr_sprites = arcade.SpriteList()
-                self.pumpkin.position = 300,180
+                self.pumpkin.position = 850,130
                 self.lst[0] += 1
                 self.lst[1] += 5
                 self.lst[2] += 9
@@ -237,18 +271,42 @@ class MyGameWindow(arcade.Window):
                         if obj not in self.current_ob:
                             self.lost = True
                     if not self.lost:
-                        self.score_count += 50
+                        self.score_count += self.pay
                         self.score_text.text = f"${self.score_count}"
                         self.current_ob = []
                         self.client_sprites = arcade.SpriteList()
                         self.client1 = None
+                        self.pay = 50
                         self.timer_start = None
                         self.correct_playback = correct_sound.play()
                 self.though_bubble_sprite = arcade.SpriteList()
                 self.submit = False
 
             if self.lost: #DECIDE IF WE WANT TO END THE GAME OR DECREMENT MONEY
+                self.current_ob = []
+                self.client_sprites = arcade.SpriteList()
+                self.client1 = None
+                self.pay = 50
+                self.timer_start = None
+                self.lost = False
+                #ERROR SOUND HEREEEEEE
+                '''
                 arcade.draw_text("GAME OVER",600,500,arcade.color.WHITE,24,width=400,align="center")
+                self.sprite_list= arcade.SpriteList()
+                self.curr_sprites= arcade.SpriteList()
+                self.gen_pumpkin= arcade.SpriteList()
+                self.eye_sprite_list= arcade.SpriteList()
+                self.nose_sprite_list= arcade.SpriteList()
+                self.mouth_sprite_list= arcade.SpriteList()
+                self.client_sprites = arcade.SpriteList()
+                self.though_bubble_sprite = arcade.SpriteList()
+                '''
+
+            self.time_text.text = f"{int(self.total_time - (time.time() - self.time_begin)//1)}"
+            if int(self.time_text.text) <= 0:
+                arcade.draw_text("GAME OVER",700,500,arcade.color.WHITE,24,width=600,align="center")
+                arcade.draw_text(f"Your score was: {self.score_text.text}",700,470,arcade.color.WHITE,24,width=600,align="center")
+                self.time_text.text = ""
                 self.sprite_list= arcade.SpriteList()
                 self.curr_sprites= arcade.SpriteList()
                 self.gen_pumpkin= arcade.SpriteList()
@@ -263,11 +321,15 @@ class MyGameWindow(arcade.Window):
             self.curr_sprites.draw()
             self.though_bubble_sprite.draw()
             self.gen_pumpkin.draw()
+            self.trashcan_sprite.draw()
+            self.trashcan_sprite.draw()
             self.eye_sprite_list.draw()
             self.nose_sprite_list.draw()
             self.mouth_sprite_list.draw()
             self.score_text.draw()
+            self.time_text.draw()
         else:
+            self.time_begin = time.time()
             arcade.draw_texture_rect(
                 self.welcome,
                 arcade.LBWH(-10, -1, self.screen_width + 10,self.screen_height),
@@ -323,8 +385,20 @@ class MyGameWindow(arcade.Window):
                 self.sprite_list = arcade.SpriteList()
                 self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
                 self.sprite_list.append(self.pumpkin)
-
                 self.submit = True
+
+        if not self.submit and arcade.check_for_collision(self.pumpkin,self.trash_can):
+            print(True)
+            self.sprite_list = arcade.SpriteList()
+            self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
+            self.pumpkin.position = 850,130
+            self.sprite_list.append(self.pumpkin)
+            self.current_ob=[]
+            self.curr_sprites = arcade.SpriteList()
+            self.score_count -= 45
+            self.score_text.text = f"${self.score_count}"
+
+
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
             self.welcome_page = False
