@@ -59,7 +59,7 @@ class MyGameWindow(arcade.Window):
         self.lst = []
         self.start = time.time()
         self.lost = False
-        self.timer = 5
+        self.timer = 7
         self.timer_start = 0
         self.i = None
         self.client_sprites = arcade.SpriteList()
