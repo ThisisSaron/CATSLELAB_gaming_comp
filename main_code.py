@@ -85,25 +85,6 @@ class MyGameWindow(arcade.Window):
 
         self.though_bubble_sprite = arcade.SpriteList()
 
-                #Pumpkins
-        '''
-        self.pumkin_list = arcade.SpriteList()
-        self.pumpkin1 = arcade.Sprite(pumpkin[0],scale=0.3)
-        self.pumpkin1.position = self.pumkinpos
-        self.pumkin_list.append(self.pumpkin)[0]
-
-        self.pumpkin2 = arcade.Sprite(pumpkin,scale=0.3)
-        self.pumpkin.position = self.pumkinpos
-        self.pumkin_list.append(self.pumpkin)[1]
-
-        self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
-        self.pumpkin.position = self.pumkinpos
-        self.pumkin_list.append(self.pumpkin)[2]
-
-        self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
-        self.pumpkin.position = self.pumkinpos[3]
-        self.pumkin_list.append(self.pumpkin)
-        '''
                 #eyes
         self.eye_sprite_list = arcade.SpriteList()
         self.eye_sprite1 = arcade.Sprite(eyes[0],scale=0.2)
@@ -290,17 +271,7 @@ class MyGameWindow(arcade.Window):
                 self.timer_start = None
                 self.lost = False
                 #ERROR SOUND HEREEEEEE
-                '''
-                arcade.draw_text("GAME OVER",600,500,arcade.color.WHITE,24,width=400,align="center")
-                self.sprite_list= arcade.SpriteList()
-                self.curr_sprites= arcade.SpriteList()
-                self.gen_pumpkin= arcade.SpriteList()
-                self.eye_sprite_list= arcade.SpriteList()
-                self.nose_sprite_list= arcade.SpriteList()
-                self.mouth_sprite_list= arcade.SpriteList()
-                self.client_sprites = arcade.SpriteList()
-                self.though_bubble_sprite = arcade.SpriteList()
-                '''
+
 
             self.time_text.text = f"{int(self.total_time - (time.time() - self.time_begin)//1)}"
             if int(self.time_text.text) <= 0:
