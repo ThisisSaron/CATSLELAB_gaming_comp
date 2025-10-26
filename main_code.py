@@ -24,6 +24,7 @@ trash_can = "trashcan.png"
 # sound and bg music
 background_music = arcade.load_sound("sound/background_music.mp3")
 correct_sound = Sound("sound/correct.mp3")
+error_sound = Sound("sound/error.mp3")
 
 carving1 = Sound("sound/saw.mp3")
 carving2 = Sound("sound/saw2.m4a")
@@ -280,6 +281,7 @@ class MyGameWindow(arcade.Window):
                 self.timer_start = None
                 self.lost = False
                 #ERROR SOUND HEREEEEEE
+                self.error_playback = error_sound.play()   
 
 
             self.time_text.text = f"{int(self.total_time - (time.time() - self.time_begin)//1)}"
