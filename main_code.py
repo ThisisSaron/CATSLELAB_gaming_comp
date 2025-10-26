@@ -228,10 +228,14 @@ class MyGameWindow(arcade.Window):
                     self.client_sprites.append(self.client1)
                     self.pay = 20
                 else:
-                    self.current_ob = []
-                    self.pay = 0
+                    self.pay = 50
                     #MAD SOUND HEREEEEEEEE
-                    self.submit = True
+                    self.start = time.time()
+                    self.gen_pumpkin = arcade.SpriteList()
+                    self.though_bubble_sprite = arcade.SpriteList()
+                    self.client_sprites = arcade.SpriteList()
+                    self.client1 = None
+                    self.timer_start = None
 
 
             if self.submit:
@@ -368,7 +372,7 @@ class MyGameWindow(arcade.Window):
             self.sprite_list.append(self.pumpkin)
             self.current_ob=[]
             self.curr_sprites = arcade.SpriteList()
-            self.score_count -= 45
+            self.score_count -= 15
             self.score_text.text = f"${self.score_count}"
 
 
