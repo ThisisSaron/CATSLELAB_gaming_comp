@@ -125,6 +125,11 @@ class MyGameWindow(arcade.Window):
         self.mouth_sprite11.position = self.mouthpos[2]
         self.mouth_sprite_list.append(self.mouth_sprite11)
 
+        self.trashcan_sprite = arcade.SpriteList()
+        self.trash_can = arcade.Sprite("Images/trashcan.png",scale=0.2)
+        self.trash_can.position = 70,50
+        self.trashcan_sprite.append(self.trash_can)
+
 
     def setup(self):
         pass
@@ -263,6 +268,7 @@ class MyGameWindow(arcade.Window):
             self.curr_sprites.draw()
             self.though_bubble_sprite.draw()
             self.gen_pumpkin.draw()
+            self.trashcan_sprite.draw()
             self.eye_sprite_list.draw()
             self.nose_sprite_list.draw()
             self.mouth_sprite_list.draw()
@@ -323,8 +329,20 @@ class MyGameWindow(arcade.Window):
                 self.sprite_list = arcade.SpriteList()
                 self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
                 self.sprite_list.append(self.pumpkin)
-
                 self.submit = True
+
+        if not self.submit and arcade.check_for_collision(self.pumpkin,self.trash_can):
+            print(True)
+            self.sprite_list = arcade.SpriteList()
+            self.pumpkin = arcade.Sprite(pumpkin,scale=0.3)
+            self.pumpkin.position = 320,180
+            self.sprite_list.append(self.pumpkin)
+            self.current_ob=[]
+            self.curr_sprites = arcade.SpriteList()
+            self.score_count -= 45
+            self.score_text.text = f"${self.score_count}"
+
+
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
             self.welcome_page = False
